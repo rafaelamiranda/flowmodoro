@@ -1,4 +1,7 @@
 import { useState, useEffect } from "react";
+import "@theme-toggles/react/css/Classic.css";
+import { Classic } from "@theme-toggles/react";
+import './style.css';
 
 const Flowmodoro = () => {
   const [isActive, setIsActive] = useState(false);
@@ -94,13 +97,12 @@ const Flowmodoro = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen dark:bg-gray-900 antialiased">
-      <div className="absolute top-0 right-0 p-5">
-        <button
-          onClick={toggleDarkMode}
-          className="px-4 py-2 rounded bg-gray-300 dark:bg-gray-700"
-        >
-          {darkMode ? "Modo Claro" : "Modo Escuro"}
-        </button>
+      <div className={`absolute top-0 right-0 p-5 ${darkMode ? 'dark-mode' : 'light-mode'}`}>
+        <Classic
+          duration={750}
+          onToggle={toggleDarkMode}
+          placeholder=""
+        />
       </div>
       <div className="p-5">
         <input

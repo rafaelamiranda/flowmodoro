@@ -1,0 +1,12 @@
+.light-mode .theme-toggle {
+  color: #000000;
+}
+
+.dark-mode .theme-toggle {
+  color: yellow;
+}
+
+.theme-toggle  svg {
+  width: 30px;
+  height: 30px;
+}
