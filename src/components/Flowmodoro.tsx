@@ -93,7 +93,7 @@ const Flowmodoro = () => {
   const showRestButton = time !== 0 && isPaused;
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen dark:bg-gray-900">
+    <div className="flex flex-col items-center justify-center h-screen dark:bg-gray-900 antialiased">
       <div className="absolute top-0 right-0 p-5">
         <button
           onClick={toggleDarkMode}
