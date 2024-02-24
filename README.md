@@ -1,30 +1,39 @@
-# React + TypeScript + Vite
+# Flowmodoro MVP
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+O Flowmodoro é uma aplicação web desenvolvida para melhorar a produtividade e o foco, combinando os conceitos das técnicas Pomodoro e Flow. Este MVP (Produto Mínimo Viável) fornece uma interface simples e intuitiva para gerenciar períodos de trabalho e descanso, ajustando-se ao tema claro ou escuro conforme as preferências do usuário.
 
-Currently, two official plugins are available:
+## Tecnologias Utilizadas
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React**: Para a construção da interface do usuário de forma eficiente e reativa.
+- **Vite**: Como ferramenta de construção para um desenvolvimento mais rápido e uma configuração simplificada.
+- **Tailwind CSS**: Para estilização rápida e responsiva sem sair do HTML.
+- **ESLint & Prettier**: Para garantir a consistência do código e formatá-lo automaticamente.
 
-## Expanding the ESLint configuration
+## Funcionalidades
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **Contador Pomodoro**: Inicie, pause e resete períodos de foco com facilidade.
+- **Período de Descanso**: Após cada sessão de foco, inicie um tempo de descanso com duração personalizada.
+- **Tema Claro/Escuro**: Alterne manualmente conforme sua preferência.
+- **Gerenciamento de Tarefas**: Insira a tarefa atual para manter o foco.
 
-- Configure the top-level `parserOptions` property like this:
+## Instruções de Instalação
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+1. Clone o repositório:  
+`git clone https://github.com/rafaelamiranda/flowmodoro.git`
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+2. Navegue até a pasta do projeto:   
+`cd flowmodoro`
+
+3. Instale as dependências:  
+`npm install`
+
+4. Inicie o servidor de desenvolvimento:  
+`npm run dev`
+
+## Contribuições
+
+Contribuições são sempre bem-vindas! Sinta-se à vontade para abrir uma issue o`u enviar um pull request.
+
+## Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.

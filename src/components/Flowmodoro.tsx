@@ -1,40 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 const Flowmodoro = () => {
   const [isActive, setIsActive] = useState(false);
   const [isPaused, setIsPaused] = useState(true);
   const [time, setTime] = useState(0);
-  const [task, setTask] = useState('');
+  const [task, setTask] = useState("");
   const [isResting, setIsResting] = useState(false);
   const [workTime, setWorkTime] = useState(0);
 
-// Função para atualizar a classe 'dark' do <body>
-const applyDarkModeClass = (isDark: boolean) => {
-  if (isDark) {
-    document.body.classList.add('dark');
-  } else {
-    document.body.classList.remove('dark');
-  }
-};
+  // Função para atualizar a classe 'dark' do <body>
+  const applyDarkModeClass = (isDark: boolean) => {
+    if (isDark) {
+      document.body.classList.add("dark");
+    } else {
+      document.body.classList.remove("dark");
+    }
+  };
 
-// Inicia com o modo dark ativado
-const [darkMode, setDarkMode] = useState(true);
+  // Inicia com o modo dark ativado
+  const [darkMode, setDarkMode] = useState(true);
 
-// Aplica a classe 'dark' ao <body> na montagem do componente
-useEffect(() => {
-  applyDarkModeClass(darkMode);
-}, [darkMode]);
+  // Aplica a classe 'dark' ao <body> na montagem do componente
+  useEffect(() => {
+    applyDarkModeClass(darkMode);
+  }, [darkMode]);
 
-// Toggle para o modo dark/light
-const toggleDarkMode = () => {
-  setDarkMode(!darkMode);
-};
+  // Toggle para o modo dark/light
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
 
   // Escuta as mudanças nas preferências do sistema para o tema escuro
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleChange = () => setDarkMode(mediaQuery.matches);
-    mediaQuery.addListener(handleChange); 
+    mediaQuery.addListener(handleChange);
     return () => mediaQuery.removeListener(handleChange);
   }, []);
 
@@ -93,13 +93,13 @@ const toggleDarkMode = () => {
   const showRestButton = time !== 0 && isPaused;
 
   return (
-    <div className='flex flex-col items-center justify-center h-screen dark:bg-gray-900'>
+    <div className="flex flex-col items-center justify-center h-screen dark:bg-gray-900">
       <div className="absolute top-0 right-0 p-5">
         <button
           onClick={toggleDarkMode}
           className="px-4 py-2 rounded bg-gray-300 dark:bg-gray-700"
         >
-          {darkMode ? 'Modo Claro' : 'Modo Escuro'}
+          {darkMode ? "Modo Claro" : "Modo Escuro"}
         </button>
       </div>
       <div className="p-5">
@@ -111,14 +111,16 @@ const toggleDarkMode = () => {
           onChange={(e) => setTask(e.target.value)}
         />
 
-        <h1 className="text-5xl text-center dark:text-white my-12">{new Date(time * 1000).toISOString().substr(14, 5)}</h1>
+        <h1 className="text-5xl text-center dark:text-white my-12">
+          {new Date(time * 1000).toISOString().substr(14, 5)}
+        </h1>
 
         <div className="flex space-x-4 mt-4 items-center justify-center">
           <button
             onClick={handleStartPause}
-            className={`px-4 py-2 rounded ${isPaused ? 'bg-blue-500' : 'bg-yellow-500'}`}
+            className={`px-4 py-2 rounded ${isPaused ? "bg-blue-500" : "bg-yellow-500"}`}
           >
-            {isPaused ? 'Iniciar' : 'Pausar'}
+            {isPaused ? "Iniciar" : "Pausar"}
           </button>
           {showRestButton && (
             <button
