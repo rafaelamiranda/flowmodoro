@@ -19,20 +19,20 @@ O Flowmodoro é uma aplicação web desenvolvida para melhorar a produtividade e
 ## Instruções de Instalação
 
 1. Clone o repositório:  
-`git clone https://github.com/rafaelamiranda/flowmodoro.git`
+   `git clone https://github.com/rafaelamiranda/flowmodoro.git`
 
-2. Navegue até a pasta do projeto:   
-`cd flowmodoro`
+2. Navegue até a pasta do projeto:  
+   `cd flowmodoro`
 
 3. Instale as dependências:  
-`npm install`
+   `npm install`
 
 4. Inicie o servidor de desenvolvimento:  
-`npm run dev`
+   `npm run dev`
 
 ## Contribuições
 
-Contribuições são sempre bem-vindas! Sinta-se à vontade para abrir uma issue o`u enviar um pull request.
+Contribuições são sempre bem-vindas! Sinta-se à vontade para abrir uma issue ou enviar um pull request.
 
 ## Licença
 
