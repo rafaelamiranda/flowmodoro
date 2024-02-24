@@ -1,4 +1,3 @@
-import React from "react";
 import Flowmodoro from "./components/Flowmodoro";
 
 function App() {
