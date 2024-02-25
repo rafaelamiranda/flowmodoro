@@ -1,9 +1,9 @@
 .light-mode .theme-toggle {
-  color: #000000;
+  color: #8b5cf6;
 }
 
 .dark-mode .theme-toggle {
-  color: yellow;
+  color: #fcd34d;
 }
 
 .theme-toggle  svg {
