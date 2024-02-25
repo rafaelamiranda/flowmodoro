@@ -6,7 +6,15 @@
   color: #fcd34d;
 }
 
-.theme-toggle  svg {
+.theme-toggle svg {
   width: 30px;
   height: 30px;
+}
+
+.icon {
+  transition: fill 0.3s ease-in-out;
+}
+
+.icon:hover, .icon:focus, .icon.active {
+  fill: #fcd34d;
 }
