@@ -17,12 +17,13 @@ const Flowmodoro = () => {
   const [isActive, setIsActive] = useState(false);
   const [isPaused, setIsPaused] = useState(true);
   const [time, setTime] = useState(0);
-  const [workTime, setWorkTime] = useState(0);
   const [isResting, setIsResting] = useState(false);
-  const [restTime, setRestTime] = useState(0);
   const [tasks, setTasks] = useState(() => JSON.parse(localStorage.getItem('tasks')) || []);
   const [selectedTaskId, setSelectedTaskId] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [currentFocusTime, setCurrentFocusTime] = useState(0);
+  const [restTime, setRestTime] = useState(0);
+
   const toast = useToast();
 
   const playSound = useCallback((soundFile) => {
@@ -30,25 +31,88 @@ const Flowmodoro = () => {
     audio.play();
   }, []);
 
-  // Atualiza o localStorage sempre que a lista de tarefas muda
-  useEffect(() => {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
+  const onAddNewTask = useCallback((newTask) => {
+    setTasks((prevTasks) => [...prevTasks, newTask]);
+    localStorage.setItem('tasks', JSON.stringify([...tasks, newTask]));
   }, [tasks]);
+
+  const onDeleteTask = useCallback((taskId) => {
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+    localStorage.setItem('tasks', JSON.stringify(tasks.filter((task) => task.id !== taskId)));
+    toast({
+      title: "Tarefa excluída",
+      description: "Tarefa excluída com sucesso.",
+      status: "success",
+      duration: 5000,
+      isClosable: true,
+    });
+    onClose();
+  }, [tasks, toast, onClose]);
+
+  const handleStartPause = useCallback(() => {
+    console.log(selectedTaskId);
+      if (!selectedTaskId || tasks.length === 0) {
+      toast({
+        title: "Nenhuma tarefa selecionada",
+        description: "Por favor, selecione uma tarefa antes de iniciar o foco.",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    setIsActive(!isActive);
+    setIsPaused(!isPaused);
+
+    if (!isActive) {
+      playSound(startSound);
+      const selectedTask = tasks.find(task => task.id === selectedTaskId);
+      if (selectedTask) {
+        setCurrentFocusTime(selectedTask.focusTime * 60);  // Assuming focusTime is in minutes, converting to seconds
+      }
+    } else {
+      playSound(pauseSound);
+      console.log(`Tempo do atual ciclo de foco: ${time} segundos`);
+      const updatedTasks = tasks.map(task => 
+        task.id === selectedTaskId ? { ...task, focusTime: task.focusTime + (time / 60) } : task  // Updating focusTime in minutes
+      );
+      setTasks(updatedTasks);
+      localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+    }
+  }, [isActive, isPaused, playSound, selectedTaskId, tasks, time, toast]);
+
+  const handleStop = useCallback(() => {
+    setIsResting(true);  // Iniciando o período de descanso
+    playSound(startRestSound);
+    // Define restTime como 20% do tempo atual (time), convertendo para segundos se necessário
+    setRestTime(Math.floor(time * 0.2));  // Definindo o restTime para 20% do tempo atual
+  }, [time, playSound]);
+  
+
+  const resetFlowmodoro = useCallback(() => {
+    setIsActive(false);
+    setIsPaused(true);
+    setIsResting(false);
+    setTime(0); 
+    setRestTime(0);
+    playSound(resetSound);
+  }, [playSound]);
 
   useEffect(() => {
     let interval = null;
   
-    if (isActive && !isPaused) {
+    if (isActive && !isPaused && !isResting) {
       interval = setInterval(() => {
-        setTime(prevTime => prevTime + 1);
+        setTime((prevTime) => prevTime + 1);
       }, 1000);
     } else if (isResting) {
       interval = setInterval(() => {
-        setRestTime(prevRestTime => prevRestTime + 1);
+        setRestTime((prevRestTime) => prevRestTime - 1);
       }, 1000);
     }
-  
-    if (isResting && restTime >= workTime * 0.2) {
+
+    if (isResting && restTime <= 0) {
       clearInterval(interval);
       playSound(endRestSound);
       resetFlowmodoro();
@@ -56,92 +120,34 @@ const Flowmodoro = () => {
         title: "Tempo de descanso finalizado",
         description: "Você pode retomar suas atividades.",
         status: "info",
-        duration: 9000,
+        duration: 5000,
         isClosable: true,
       });
     }
-  
+
     return () => clearInterval(interval);
-  }, [isActive, isPaused, isResting, time, restTime, workTime, toast, playSound]);
-  
-
-  const handleSelectChange = (event) => {
-    const selectedTaskId = event.target.value;
-    setSelectedTaskId(selectedTaskId);
-    const selectedTask = tasks.find((task) => task.id === parseInt(selectedTaskId));
-    if (selectedTask) {
-      setWorkTime(selectedTask.focusTime * 60);
-    }
-  };
-
-  const handleStartPause = useCallback(() => {
-    // Verifica se o foco está ativo e não pausado para pausar o foco
-    if (isActive && !isPaused) {
-      // Encontra a tarefa selecionada na lista de tarefas
-      const updatedTasks = tasks.map(task => {
-        if (task.id === parseInt(selectedTaskId)) {
-          // Atualiza o workTime da tarefa selecionada adicionando o tempo atual do contador
-          return { ...task, focusTime: task.focusTime + (time / 60) }; // Converte 'time' de segundos para minutos
-        }
-        return task;
-      });
-  
-      // Atualiza a lista de tarefas com a tarefa atualizada
-      setTasks(updatedTasks);
-  
-      // Salva as tarefas atualizadas no localStorage
-      localStorage.setItem('tasks', JSON.stringify(updatedTasks));
-    }
-  
-    // Alterna o estado de pausa e ativa o som correspondente
-    setIsActive(!isActive);
-    setIsPaused(!isPaused);
-    playSound(isPaused ? startSound : pauseSound);
-  }, [isActive, isPaused, tasks, time, selectedTaskId, playSound]);
-  
-
-  const handleStop = useCallback(() => {
-    console.log(workTime);
-    setIsResting(true);
-    setTime(0);
-    playSound(startRestSound);
-  }, [playSound, workTime]);
-
-  const handleReset = useCallback(() => {
-    resetFlowmodoro();
-    playSound(resetSound);
-  }, [playSound]);
-
-  const resetFlowmodoro = () => {
-    setIsActive(false);
-    setIsPaused(true);
-    setIsResting(false);
-    setTime(0);
-    // Reset workTime
-    setWorkTime(0);
-  };
-  
+  }, [isActive, isPaused, isResting, restTime, playSound, toast, resetFlowmodoro]);
 
   return (
     <Box bg={useColorModeValue('white', 'gray.700')} color={useColorModeValue('gray.800', 'whiteAlpha.900')}>
       <Flex direction="column" align="center" justify="center" h="100vh">
         <Flex position={"absolute"} top={5} right={5}>
           <Button onClick={onOpen}>Adicionar Tarefa</Button>
-          <TaskModal isOpen={isOpen} onClose={onClose} tasks={tasks} setTasks={setTasks} />
+          <TaskModal isOpen={isOpen} onClose={onClose} onAddNewTask={onAddNewTask} onDeleteTask={onDeleteTask} />
           <DarkModeSwitch />
         </Flex>
 
         <Flex direction="column" align="center" justify="center">
-          <Select placeholder="Selecione uma tarefa" onChange={handleSelectChange} value={selectedTaskId} isDisabled={isResting} aria-label="Selecione uma tarefa" isRequired >
-            {tasks.map(task => (
+          <Select placeholder="Selecione uma tarefa" onChange={(e) => setSelectedTaskId(e.target.value)} value={selectedTaskId} isDisabled={isResting}>
+            {tasks.map((task) => (
               <option key={task.id} value={task.id}>{task.name}</option>
             ))}
           </Select>
         </Flex>
 
-        <TimerComponent time={time} />
+        <TimerComponent time={isResting ? restTime : time} />
         <Flex>
-          {!isPaused && (
+          {!isPaused && !isResting && (
             <ButtonComponent icon={<FaPause />} colorScheme="yellow" onClick={handleStartPause} aria-label="Pausar">
               Pausar
             </ButtonComponent>
@@ -151,15 +157,15 @@ const Flowmodoro = () => {
               Iniciar
             </ButtonComponent>
           )}
-          {isPaused && time !== 0 && !isResting && (
-            <ButtonComponent icon={<FaRedo />} colorScheme="pink" onClick={handleReset} aria-label="Resetar">
-              Resetar
-            </ButtonComponent>
-          )}
           {isPaused && time > 0 && !isResting && (
-            <ButtonComponent icon={<FaCoffee />} colorScheme="red" onClick={handleStop} aria-label="Descansar">
-              Descansar
-            </ButtonComponent>
+            <>
+              <ButtonComponent icon={<FaRedo />} colorScheme="pink" onClick={resetFlowmodoro} aria-label="Resetar">
+                Resetar
+              </ButtonComponent>
+              <ButtonComponent icon={<FaCoffee />} colorScheme="red" onClick={handleStop} aria-label="Descansar">
+                Descansar
+              </ButtonComponent>
+            </>
           )}
           {isResting && <Text>Tempo de descanso! Aproveite para relaxar.</Text>}
         </Flex>
@@ -169,3 +175,4 @@ const Flowmodoro = () => {
 };
 
 export default Flowmodoro;
+
