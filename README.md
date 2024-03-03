@@ -6,7 +6,7 @@ O Flowmodoro é uma aplicação web desenvolvida para melhorar a produtividade e
 
 - **React**: Para a construção da interface do usuário de forma eficiente e reativa.
 - **Vite**: Como ferramenta de construção para um desenvolvimento mais rápido e uma configuração simplificada.
-- **Tailwind CSS**: Para estilização rápida e responsiva sem sair do HTML.
+- **Chakra UI**: Adotado para estilização rápida e responsiva com um sistema de design integrado e acessível.
 - **ESLint & Prettier**: Para garantir a consistência do código e formatá-lo automaticamente.
 
 ## Funcionalidades

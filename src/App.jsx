@@ -1,4 +1,4 @@
-import Flowmodoro from "./components/Flowmodoro";
+import Flowmodoro from "./flowmodoro/Flowmodoro";
 
 function App() {
   return (
