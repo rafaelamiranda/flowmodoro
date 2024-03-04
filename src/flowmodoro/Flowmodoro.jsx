@@ -18,89 +18,39 @@ const Flowmodoro = () => {
   const [isPaused, setIsPaused] = useState(true);
   const [time, setTime] = useState(0);
   const [isResting, setIsResting] = useState(false);
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState(() => JSON.parse(localStorage.getItem('tasks')) || []);
   const [selectedTaskId, setSelectedTaskId] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [currentFocusTime, setCurrentFocusTime] = useState(0);
   const [restTime, setRestTime] = useState(0);
-  const [currentFocusTime , setCurrentFocusTime] = useState(0);
+
   const toast = useToast();
-  const apiUrl = import.meta.env.VITE_API_URL;
 
   const playSound = useCallback((soundFile) => {
     const audio = new Audio(soundFile);
     audio.play();
   }, []);
 
-  const loadTasks = useCallback(async () => {
-    console.log('Carregando tarefas...'); // Para depuração
-    const response = await fetch(`${apiUrl}/api/tasks`);
-    const data = await response.json();
-    setTasks(data);
-  }, [apiUrl]);
-
-  useEffect(() => {
-    console.log('Tarefas atualizadas:', tasks);
+  const onAddNewTask = useCallback((newTask) => {
+    setTasks((prevTasks) => [...prevTasks, newTask]);
+    localStorage.setItem('tasks', JSON.stringify([...tasks, newTask]));
   }, [tasks]);
 
-  useEffect(() => {
-    loadTasks();
-  }, [loadTasks]);
-
-  const onAddNewTask = useCallback(async (newTask) => {
-    try {
-      const response = await fetch(`${apiUrl}/api/tasks`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newTask),
-      });
-
-      if (!response.ok) {
-        throw new Error('Falha ao adicionar tarefa');
-      }
-
-      // Recarrega as tarefas do servidor após adicionar uma nova tarefa com sucesso
-      await loadTasks();
-
-      toast({
-        title: 'Tarefa adicionada.',
-        status: 'success',
-        duration: 3000,
-        isClosable: true
-      });
-    } catch (error) {
-      console.error("Erro ao adicionar tarefa:", error);
-      toast({
-        title: "Erro",
-        description: "Não foi possível adicionar a tarefa.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    }
-  }, [apiUrl, toast, loadTasks]); // Adicione 'loadTasks' às dependências do useCallback
-
-
-  const onDeleteTask = useCallback(async (taskId) => {
-    const response = await fetch(`${apiUrl}/api/tasks/${taskId}`, {
-      method: 'DELETE',
+  const onDeleteTask = useCallback((taskId) => {
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+    localStorage.setItem('tasks', JSON.stringify(tasks.filter((task) => task.id !== taskId)));
+    toast({
+      title: "Tarefa excluída",
+      description: "Tarefa excluída com sucesso.",
+      status: "success",
+      duration: 5000,
+      isClosable: true,
     });
-    if (response.ok) {
-      setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
-      toast({
-        title: "Tarefa excluída",
-        description: "Tarefa excluída com sucesso.",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
-      onClose();
-    }
-  }, [onClose, toast, apiUrl]);
+    onClose();
+  }, [tasks, toast, onClose]);
 
-  const handleStartPause = useCallback(async () => {
-    if (!selectedTaskId || tasks.length === 0) {
+  const handleStartPause = useCallback(() => {
+      if (!selectedTaskId || tasks.length === 0) {
       toast({
         title: "Nenhuma tarefa selecionada",
         description: "Por favor, selecione uma tarefa antes de iniciar o foco.",
@@ -116,49 +66,35 @@ const Flowmodoro = () => {
 
     if (!isActive) {
       playSound(startSound);
-      // Não precisa atualizar o backend quando o cronômetro começa
+      const selectedTask = tasks.find(task => task.id === selectedTaskId);
+      if (selectedTask) {
+        setCurrentFocusTime(selectedTask.focusTime * 60);
+      }
     } else {
       playSound(pauseSound);
-      // Atualize o tempo de foco no backend quando o cronômetro pausa
-      const selectedTask = tasks.find(task => task._id === selectedTaskId);
-      if (selectedTask) {
-        const updatedFocusTime = selectedTask.focusTime + (time / 60); // Converta o tempo para minutos
-        try {
-          const response = await fetch(`${apiUrl}/api/tasks/${selectedTaskId}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ focusTime: updatedFocusTime }),
-          });
-
-          if (!response.ok) {
-            throw new Error('Falha ao atualizar a tarefa');
-          }
-
-          // Atualize o estado local após a atualização bem-sucedida
-          const updatedTask = await response.json();
-          setTasks(tasks.map(task => task._id === selectedTaskId ? updatedTask : task));
-        } catch (error) {
-          console.error(error);
-          toast({
-            title: "Erro",
-            description: "Não foi possível atualizar o tempo de foco da tarefa.",
-            status: "error",
-            duration: 5000,
-            isClosable: true,
-          });
-        }
-      }
+      const updatedTasks = tasks.map(task =>
+        task.id === selectedTaskId ? { ...task, focusTime: task.focusTime + (time / 60) } : task
+      );
+      setTasks(updatedTasks);
+      localStorage.setItem('tasks', JSON.stringify(updatedTasks));
     }
-  }, [isActive, isPaused, playSound, selectedTaskId, tasks, time, toast, apiUrl]);
-
+  }, [isActive, isPaused, playSound, selectedTaskId, tasks, time, toast]);
 
   const handleStop = useCallback(() => {
-    setIsResting(true);
-    playSound(startRestSound);
-    setRestTime(Math.floor(time * 0.2));
-  }, [time, playSound]);
+    if (time < 5) {
+      toast({
+        title: "Tempo de trabalho insuficiente",
+        description: "Continue trabalhando por mais tempo antes de descansar.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } else {
+      setIsResting(true);
+      playSound(startRestSound);
+      setRestTime(Math.floor(time * 0.2));
+    }
+  }, [time, playSound, toast]);
 
   const resetFlowmodoro = useCallback(() => {
     setIsActive(false);
@@ -203,23 +139,16 @@ const Flowmodoro = () => {
       <Flex direction="column" align="center" justify="center" h="100vh">
         <Flex position={"absolute"} top={5} right={5}>
           <Button onClick={onOpen}>Adicionar Tarefa</Button>
-          <TaskModal
-      isOpen={isOpen}
-      onClose={onClose}
-      onAddNewTask={onAddNewTask}
-      onDeleteTask={onDeleteTask}
-      apiUrl={apiUrl} // Passando apiUrl como prop para TaskModal
-    />
+          <TaskModal isOpen={isOpen} onClose={onClose} onAddNewTask={onAddNewTask} onDeleteTask={onDeleteTask} />
           <DarkModeSwitch />
         </Flex>
 
         <Flex direction="column" align="center" justify="center">
-          <Select placeholder="Selecione uma tarefa" onChange={(e) => setSelectedTaskId(e.target.value)} value={selectedTaskId} isDisabled={isResting}>
-  {tasks.map((task) => (
-    <option key={task._id} value={task._id}>{task.name}</option>
-  ))}
-</Select>
-
+          <Select placeholder="Selecione uma tarefa" onChange={(e) => setSelectedTaskId(e.target.value)} value={selectedTaskId} isDisabled={isResting || isActive || time > 0}>
+            {tasks.map((task) => (
+              <option key={task.id} value={task.id}>{task.name}</option>
+            ))}
+          </Select>
         </Flex>
 
         <TimerComponent time={isResting ? restTime : time} />

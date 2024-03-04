@@ -30,4 +30,3 @@ TimerComponent.propTypes = {
 };
 
 export default TimerComponent;
-
