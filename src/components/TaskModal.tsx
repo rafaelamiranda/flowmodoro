@@ -105,7 +105,7 @@ const TaskModal: FC<TaskModalProps> = ({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent width={"auto"} maxW={"80%"} aria-labelledby="modal-heading" aria-describedby="modal-description">
         <ModalHeader id="modal-heading">Cadastrar Tarefa</ModalHeader>
