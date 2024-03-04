@@ -181,7 +181,8 @@ const Flowmodoro: React.FC = () => {
         </Flex>
 
         <Flex direction="column" align="center" justify="center">
-          <Select placeholder="Selecione uma tarefa" onChange={(e) => setSelectedTaskId(e.target.value)} value={selectedTaskId} isDisabled={isResting || isActive || time > 0}>
+          <label htmlFor="task" hidden>Selecione uma tarefa</label>
+          <Select id="task" name="task" placeholder="Selecione uma tarefa" onChange={(e) => setSelectedTaskId(e.target.value)} value={selectedTaskId} isDisabled={isResting || isActive || time > 0}>
             {tasks.map((task) => (
               <option key={task.id} value={task.id}>{task.name}</option>
             ))}
