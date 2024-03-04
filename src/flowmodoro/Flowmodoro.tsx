@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Flex, Box, Text, Select, useToast, Button, useDisclosure } from '@chakra-ui/react';
+import { Flex, Box, Text, Select, useToast, useDisclosure } from '@chakra-ui/react';
 import { FaPlay, FaPause, FaRedo, FaCoffee } from 'react-icons/fa';
 import { useColorModeValue } from '@chakra-ui/react';
 import TaskModal from "../components/TaskModal";
