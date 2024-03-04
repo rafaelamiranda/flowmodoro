@@ -63,6 +63,7 @@ const Flowmodoro: React.FC = () => {
         status: "warning",
         duration: 5000,
         isClosable: true,
+        colorScheme: "red",
       });
       return;
     }
@@ -141,7 +142,7 @@ const Flowmodoro: React.FC = () => {
   return (
     <Box bg={useColorModeValue('white', 'gray.700')} color={useColorModeValue('gray.800', 'whiteAlpha.900')}>
       <Flex direction="column" align="center" justify="center" h="100vh">
-        <Flex position={"absolute"} top={5} right={5}>
+        <Flex position={"absolute"} top={5} right={5} gap={2}>
           <ButtonComponent onClick={onOpen} colorScheme="teal">Adicionar Tarefa</ButtonComponent>
           <TaskModal isOpen={isOpen} onClose={onClose} onAddNewTask={onAddNewTask} onDeleteTask={onDeleteTask} />
           <DarkModeSwitch />
@@ -158,7 +159,7 @@ const Flowmodoro: React.FC = () => {
         <TimerComponent time={isResting ? restTime : time} />
         <Flex>
           {!isPaused && !isResting && (
-            <ButtonComponent icon={<FaPause />} colorScheme="yellow" onClick={handleStartPause} aria-label="Pausar">
+            <ButtonComponent icon={<FaPause />} colorScheme="teal" onClick={handleStartPause} aria-label="Pausar">
               Pausar
             </ButtonComponent>
           )}
@@ -169,10 +170,10 @@ const Flowmodoro: React.FC = () => {
           )}
           {isPaused && time > 0 && !isResting && (
             <>
-              <ButtonComponent icon={<FaRedo />} colorScheme="pink" onClick={resetFlowmodoro} aria-label="Resetar">
+              <ButtonComponent icon={<FaRedo />} colorScheme="teal" onClick={resetFlowmodoro} aria-label="Resetar">
                 Resetar
               </ButtonComponent>
-              <ButtonComponent icon={<FaCoffee />} colorScheme="red" onClick={handleStop} aria-label="Descansar">
+              <ButtonComponent icon={<FaCoffee />} colorScheme="teal" onClick={handleStop} aria-label="Descansar">
                 Descansar
               </ButtonComponent>
             </>

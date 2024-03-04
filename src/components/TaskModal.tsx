@@ -94,7 +94,7 @@ const TaskModal: FC<TaskModalProps> = ({ isOpen, onClose, onAddNewTask, onDelete
                   <Td>{task.name}</Td>
                   <Td>{formatFocusTime(task.focusTime)}</Td>
                   <Td>
-                    <Button size="sm" colorScheme="red" onClick={() => onDeleteTask(task.id)}>
+                    <Button size="sm" colorScheme="teal" onClick={() => onDeleteTask(task.id)}>
                       <DeleteIcon />
                     </Button>
                   </Td>
@@ -104,7 +104,7 @@ const TaskModal: FC<TaskModalProps> = ({ isOpen, onClose, onAddNewTask, onDelete
           </Table>
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme="blue" onClick={submitTask}>Adicionar</Button>
+          <Button colorScheme="teal" onClick={submitTask}>Adicionar</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
