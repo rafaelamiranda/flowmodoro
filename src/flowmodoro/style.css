@@ -5,13 +5,3 @@
 button:focus {
   outline: 2px solid #000;
 }
-
-.chakra-ui-dark select,
-.chakra-ui-dark input {
-  border: 1px solid #285E61;
-}
-
-.chakra-ui-light select,
-.chakra-ui-light input {
-  border: 1px solid #319795;
-}
