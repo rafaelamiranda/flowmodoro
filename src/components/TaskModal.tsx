@@ -86,6 +86,7 @@ const TaskModal: FC<TaskModalProps> = ({ isOpen, onClose, onAddNewTask, onDelete
             value={taskName}
             onChange={(e) => setTaskName(e.target.value)}
             mb={4}
+            name="taskName"
           />
           <Table variant="simple">
             <Thead>
