@@ -1,5 +1,24 @@
-import { useState, useEffect, FC } from 'react';
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Input, Button, Table, Thead, Tbody, Tr, Th, Td, useToast } from '@chakra-ui/react';
+import React, { useState, useEffect, FC, useRef } from 'react';
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  Input,
+  Button,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  useToast,
+  FormControl,
+  FormErrorMessage
+} from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -14,17 +33,27 @@ interface TaskModalProps {
   onClose: () => void;
   onAddNewTask: (task: Task) => void;
   onDeleteTask: (taskId: string) => void;
+  triggerButtonRef: React.RefObject<HTMLButtonElement>;
 }
 
-const TaskModal: FC<TaskModalProps> = ({ isOpen, onClose, onAddNewTask, onDeleteTask }) => {
+const TaskModal: FC<TaskModalProps> = ({
+  isOpen,
+  onClose,
+  onAddNewTask,
+  onDeleteTask,
+  triggerButtonRef
+}) => {
   const [taskName, setTaskName] = useState<string>('');
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [isTaskNameError, setIsTaskNameError] = useState<boolean>(false);
+  const firstInputRef = useRef<HTMLInputElement>(null); // Ref para o primeiro input do formulário
   const toast = useToast();
 
   useEffect(() => {
     if (isOpen) {
       const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
       setTasks(savedTasks);
+      setTimeout(() => firstInputRef.current?.focus(), 100);
     }
   }, [isOpen]);
 
@@ -32,15 +61,15 @@ const TaskModal: FC<TaskModalProps> = ({ isOpen, onClose, onAddNewTask, onDelete
     localStorage.setItem('tasks', JSON.stringify(tasks));
   }, [tasks]);
 
+  useEffect(() => {
+    if (!isOpen && triggerButtonRef.current) {
+      triggerButtonRef.current.focus();
+    }
+  }, [isOpen, triggerButtonRef]);
+
   const submitTask = () => {
     if (!taskName.trim()) {
-      toast({
-        title: "Erro",
-        description: "Por favor, insira um nome para a tarefa.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
+      setIsTaskNameError(true);
       return;
     }
 
@@ -59,6 +88,12 @@ const TaskModal: FC<TaskModalProps> = ({ isOpen, onClose, onAddNewTask, onDelete
       isClosable: true
     });
     onClose();
+    triggerButtonRef.current?.focus(); // Retorna o foco para o botão que abriu o modal
+  };
+
+  const handleClose = () => {
+    onClose();
+    triggerButtonRef.current?.focus(); // Retorna o foco para o botão que abriu o modal
   };
 
   const formatFocusTime = (focusTime: number) => {
@@ -73,21 +108,33 @@ const TaskModal: FC<TaskModalProps> = ({ isOpen, onClose, onAddNewTask, onDelete
     }
     return text;
   }
-  
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered >
+    <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent width={"auto"} maxW={"80%"}>
-        <ModalHeader>Cadastrar Tarefa</ModalHeader>
+      <ModalContent width={"auto"} maxW={"80%"} aria-labelledby="modal-heading" aria-describedby="modal-description">
+        <ModalHeader id="modal-heading">Cadastrar Tarefa</ModalHeader>
         <ModalCloseButton />
-        <ModalBody>
-          <Input
-            placeholder="Nome da Tarefa"
-            value={taskName}
-            onChange={(e) => setTaskName(e.target.value)}
-            mb={4}
-            name="taskName"
-          />
+        <ModalBody id="modal-description">
+          <FormControl isInvalid={isTaskNameError}>
+            <Input
+              ref={firstInputRef}
+              placeholder="Nome da Tarefa"
+              value={taskName}
+              onChange={(e) => {
+                setTaskName(e.target.value);
+                setIsTaskNameError(false);
+              }}
+              mb={4}
+              aria-label="Nome da Tarefa"
+              aria-describedby="taskNameError"
+            />
+            {isTaskNameError && (
+              <FormErrorMessage id="taskNameError">
+                Por favor, insira um nome para a tarefa.
+              </FormErrorMessage>
+            )}
+          </FormControl>
           <Table variant="simple">
             <Thead>
               <Tr>
@@ -102,7 +149,7 @@ const TaskModal: FC<TaskModalProps> = ({ isOpen, onClose, onAddNewTask, onDelete
                   <Td>{truncateText(task.name, 100)}</Td>
                   <Td>{formatFocusTime(task.focusTime)}</Td>
                   <Td>
-                    <Button size="sm" colorScheme="teal" onClick={() => onDeleteTask(task.id)}>
+                    <Button size="sm" colorScheme="teal" onClick={() => onDeleteTask(task.id)} aria-label={`Excluir Tarefa ${task.name}`}>
                       <DeleteIcon />
                     </Button>
                   </Td>
