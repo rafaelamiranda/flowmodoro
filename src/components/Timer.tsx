@@ -17,11 +17,11 @@ const TimerComponent: FC<TimerComponentProps> = ({ time }) => {
   return (
     <Flex mb={4} align="center">
       {minutes.split('').map((digit, index) => (
-        <Text key={index} fontSize="6xl" mb={4}>{digit}</Text>
+        <Text as="h1" key={index} fontSize="6xl" mb={4}>{digit}</Text>
       ))}
-      <Text fontSize="6xl" mb={4}>:</Text>
+      <Text as="h2" fontSize="6xl" mb={4}>:</Text>
       {seconds.split('').map((digit, index) => (
-        <Text key={index} fontSize="6xl" mb={4}>{digit}</Text>
+        <Text as="h1" key={index} fontSize="6xl" mb={4}>{digit}</Text>
       ))}
     </Flex>
   );
