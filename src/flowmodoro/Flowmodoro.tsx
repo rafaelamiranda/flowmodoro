@@ -142,7 +142,7 @@ const Flowmodoro: React.FC = () => {
     <Box bg={useColorModeValue('white', 'gray.700')} color={useColorModeValue('gray.800', 'whiteAlpha.900')}>
       <Flex direction="column" align="center" justify="center" h="100vh">
         <Flex position={"absolute"} top={5} right={5}>
-          <Button onClick={onOpen}>Adicionar Tarefa</Button>
+          <ButtonComponent onClick={onOpen} colorScheme="teal">Adicionar Tarefa</ButtonComponent>
           <TaskModal isOpen={isOpen} onClose={onClose} onAddNewTask={onAddNewTask} onDeleteTask={onDeleteTask} />
           <DarkModeSwitch />
         </Flex>
