@@ -6,7 +6,7 @@ const DarkModeSwitch: React.FC = () => {
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (
-    <Button onClick={toggleColorMode} variant="ghost" aria-label="Toggle Dark Mode">
+    <Button onClick={toggleColorMode} variant="ghost" aria-label="Toggle Dark Mode" title="Dark Mode">
       {colorMode === 'light' ? (
         <MoonIcon w={6} h={6} transition="color 0.2s" />
       ) : (

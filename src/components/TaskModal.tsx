@@ -67,10 +67,17 @@ const TaskModal: FC<TaskModalProps> = ({ isOpen, onClose, onAddNewTask, onDelete
     return `${mins}m ${secs < 10 ? '0' : ''}${secs}s`;
   };
 
+  function truncateText(text: string, maxLength: number) {
+    if (text.length > maxLength) {
+      return text.substring(0, maxLength) + '...';
+    }
+    return text;
+  }
+  
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered >
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent width={"auto"} maxW={"80%"}>
         <ModalHeader>Cadastrar Tarefa</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
@@ -91,7 +98,7 @@ const TaskModal: FC<TaskModalProps> = ({ isOpen, onClose, onAddNewTask, onDelete
             <Tbody>
               {tasks.map((task) => (
                 <Tr key={task.id}>
-                  <Td>{task.name}</Td>
+                  <Td>{truncateText(task.name, 100)}</Td>
                   <Td>{formatFocusTime(task.focusTime)}</Td>
                   <Td>
                     <Button size="sm" colorScheme="teal" onClick={() => onDeleteTask(task.id)}>
