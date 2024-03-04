@@ -1,9 +1,12 @@
-import PropTypes from 'prop-types';
+import { FC } from 'react';
 import { Flex, Text } from '@chakra-ui/react';
 
-const TimerComponent = ({ time }) => {
-  // Função para formatar o tempo
-  const formatTime = (time) => {
+interface TimerComponentProps {
+  time: number; 
+}
+
+const TimerComponent: FC<TimerComponentProps> = ({ time }) => {
+  const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60).toString().padStart(2, '0');
     const seconds = (time % 60).toString().padStart(2, '0');
     return { minutes, seconds };
@@ -22,11 +25,6 @@ const TimerComponent = ({ time }) => {
       ))}
     </Flex>
   );
-};
-
-// Definindo propTypes para o componente Timer
-TimerComponent.propTypes = {
-  time: PropTypes.number.isRequired,
 };
 
 export default TimerComponent;

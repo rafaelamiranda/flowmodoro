@@ -13,32 +13,38 @@ import startRestSound from '../assets/break.mp3';
 import endRestSound from '../assets/alerta.mp3';
 import './style.css';
 
-const Flowmodoro = () => {
-  const [isActive, setIsActive] = useState(false);
-  const [isPaused, setIsPaused] = useState(true);
-  const [time, setTime] = useState(0);
-  const [isResting, setIsResting] = useState(false);
-  const [tasks, setTasks] = useState(() => JSON.parse(localStorage.getItem('tasks')) || []);
-  const [selectedTaskId, setSelectedTaskId] = useState('');
+interface Task {
+  id: string;
+  name: string;
+  focusTime: number;
+}
+
+const Flowmodoro: React.FC = () => {
+  const [isActive, setIsActive] = useState<boolean>(false);
+  const [isPaused, setIsPaused] = useState<boolean>(true);
+  const [time, setTime] = useState<number>(0);
+  const [isResting, setIsResting] = useState<boolean>(false);
+  const [tasks, setTasks] = useState<Task[]>(() => JSON.parse(localStorage.getItem('tasks') || '[]'));
+  const [selectedTaskId, setSelectedTaskId] = useState<string>('');
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [currentFocusTime, setCurrentFocusTime] = useState(0);
-  const [restTime, setRestTime] = useState(0);
+  const [restTime, setRestTime] = useState<number>(0);
 
   const toast = useToast();
 
-  const playSound = useCallback((soundFile) => {
+  const playSound = useCallback((soundFile: string) => {
     const audio = new Audio(soundFile);
     audio.play();
   }, []);
 
-  const onAddNewTask = useCallback((newTask) => {
+  const onAddNewTask = useCallback((newTask: Task) => {
     setTasks((prevTasks) => [...prevTasks, newTask]);
     localStorage.setItem('tasks', JSON.stringify([...tasks, newTask]));
   }, [tasks]);
 
-  const onDeleteTask = useCallback((taskId) => {
-    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
-    localStorage.setItem('tasks', JSON.stringify(tasks.filter((task) => task.id !== taskId)));
+  const onDeleteTask = useCallback((taskId: string) => {
+    const updatedTasks = tasks.filter((task) => task.id !== taskId);
+    setTasks(updatedTasks);
+    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
     toast({
       title: "Tarefa excluída",
       description: "Tarefa excluída com sucesso.",
@@ -66,10 +72,6 @@ const Flowmodoro = () => {
 
     if (!isActive) {
       playSound(startSound);
-      const selectedTask = tasks.find(task => task.id === selectedTaskId);
-      if (selectedTask) {
-        setCurrentFocusTime(selectedTask.focusTime * 60);
-      }
     } else {
       playSound(pauseSound);
       const updatedTasks = tasks.map(task =>
@@ -106,7 +108,7 @@ const Flowmodoro = () => {
   }, [playSound]);
 
   useEffect(() => {
-    let interval = null;
+    let interval: NodeJS.Timeout | null = null;
 
     if (isActive && !isPaused && !isResting) {
       interval = setInterval(() => {
@@ -119,7 +121,7 @@ const Flowmodoro = () => {
     }
 
     if (isResting && restTime <= 0) {
-      clearInterval(interval);
+      if (interval) clearInterval(interval);
       playSound(endRestSound);
       resetFlowmodoro();
       toast({
@@ -131,7 +133,9 @@ const Flowmodoro = () => {
       });
     }
 
-    return () => clearInterval(interval);
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, [isActive, isPaused, isResting, restTime, playSound, toast, resetFlowmodoro]);
 
   return (

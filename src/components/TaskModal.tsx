@@ -1,17 +1,29 @@
-import { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import { useState, useEffect, FC } from 'react';
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Input, Button, Table, Thead, Tbody, Tr, Th, Td, useToast } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import { v4 as uuidv4 } from 'uuid';
 
-function TaskModal({ isOpen, onClose, onAddNewTask, onDeleteTask }) {
-  const [taskName, setTaskName] = useState('');
-  const [tasks, setTasks] = useState([]);
+interface Task {
+  id: string;
+  name: string;
+  focusTime: number;
+}
+
+interface TaskModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onAddNewTask: (task: Task) => void;
+  onDeleteTask: (taskId: string) => void;
+}
+
+const TaskModal: FC<TaskModalProps> = ({ isOpen, onClose, onAddNewTask, onDeleteTask }) => {
+  const [taskName, setTaskName] = useState<string>('');
+  const [tasks, setTasks] = useState<Task[]>([]);
   const toast = useToast();
 
   useEffect(() => {
     if (isOpen) {
-      const savedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+      const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
       setTasks(savedTasks);
     }
   }, [isOpen]);
@@ -32,7 +44,7 @@ function TaskModal({ isOpen, onClose, onAddNewTask, onDeleteTask }) {
       return;
     }
 
-    const newTask = {
+    const newTask: Task = {
       id: uuidv4(),
       name: taskName.trim(),
       focusTime: 0
@@ -45,11 +57,11 @@ function TaskModal({ isOpen, onClose, onAddNewTask, onDeleteTask }) {
       status: 'success',
       duration: 3000,
       isClosable: true
-    })
+    });
     onClose();
   };
 
-  const formatFocusTime = (focusTime) => {
+  const formatFocusTime = (focusTime: number) => {
     const mins = Math.floor(focusTime);
     const secs = Math.round((focusTime - mins) * 60);
     return `${mins}m ${secs < 10 ? '0' : ''}${secs}s`;
@@ -97,13 +109,6 @@ function TaskModal({ isOpen, onClose, onAddNewTask, onDeleteTask }) {
       </ModalContent>
     </Modal>
   );
-}
-
-TaskModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onAddNewTask: PropTypes.func.isRequired,
-  onDeleteTask: PropTypes.func.isRequired
 };
 
 export default TaskModal;
