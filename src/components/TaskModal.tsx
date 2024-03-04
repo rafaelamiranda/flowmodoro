@@ -91,11 +91,6 @@ const TaskModal: FC<TaskModalProps> = ({
     triggerButtonRef.current?.focus(); // Retorna o foco para o botão que abriu o modal
   };
 
-  const handleClose = () => {
-    onClose();
-    triggerButtonRef.current?.focus(); // Retorna o foco para o botão que abriu o modal
-  };
-
   const formatFocusTime = (focusTime: number) => {
     const mins = Math.floor(focusTime);
     const secs = Math.round((focusTime - mins) * 60);

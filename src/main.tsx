@@ -15,3 +15,4 @@ ReactDOM.createRoot(rootElement).render(
     </ChakraProvider>
   </React.StrictMode>
 );
+
