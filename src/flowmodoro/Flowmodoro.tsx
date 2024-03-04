@@ -151,7 +151,7 @@ const Flowmodoro: React.FC = () => {
         <Flex direction="column" align="center" justify="center">
           <Select placeholder="Selecione uma tarefa" onChange={(e) => setSelectedTaskId(e.target.value)} value={selectedTaskId} isDisabled={isResting || isActive || time > 0}>
             {tasks.map((task) => (
-              <option key={task.id} value={task.id}>{task.name}</option>
+              <option key={task.id} value={task.name}>{task.name}</option>
             ))}
           </Select>
         </Flex>
@@ -159,21 +159,21 @@ const Flowmodoro: React.FC = () => {
         <TimerComponent time={isResting ? restTime : time} />
         <Flex>
           {!isPaused && !isResting && (
-            <ButtonComponent id="btn-add-task" icon={<FaPause />} colorScheme="teal" onClick={handleStartPause} aria-label="Pausar">
+            <ButtonComponent id="btn-pause" icon={<FaPause />} colorScheme="teal" onClick={handleStartPause} aria-label="Pausar">
               Pausar
             </ButtonComponent>
           )}
           {isPaused && time === 0 && !isResting && (
-            <ButtonComponent icon={<FaPlay />} colorScheme="teal" onClick={handleStartPause} aria-label="Iniciar">
+            <ButtonComponent icon={<FaPlay />} colorScheme="teal" onClick={handleStartPause} aria-label="Iniciar" id="btn-start">
               Iniciar
             </ButtonComponent>
           )}
           {isPaused && time > 0 && !isResting && (
             <>
-              <ButtonComponent icon={<FaRedo />} colorScheme="teal" onClick={resetFlowmodoro} aria-label="Resetar">
+              <ButtonComponent icon={<FaRedo />} colorScheme="teal" onClick={resetFlowmodoro} aria-label="Resetar" id="btn-reset">
                 Resetar
               </ButtonComponent>
-              <ButtonComponent icon={<FaCoffee />} colorScheme="teal" onClick={handleStop} aria-label="Descansar">
+              <ButtonComponent icon={<FaCoffee />} colorScheme="teal" onClick={handleStop} aria-label="Descansar" id="btn-rest">
                 Descansar
               </ButtonComponent>
             </>
