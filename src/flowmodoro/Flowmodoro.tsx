@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Flex, Box, Text, Select, useToast, useDisclosure } from '@chakra-ui/react';
+import { Flex, Box, Text, Select, useToast, useDisclosure, FormControl, FormLabel } from '@chakra-ui/react';
 import { FaPlay, FaPause, FaRedo, FaCoffee } from 'react-icons/fa';
 import { useColorModeValue } from '@chakra-ui/react';
 import TaskModal from "../components/TaskModal";
@@ -181,12 +181,14 @@ const Flowmodoro: React.FC = () => {
         </Flex>
 
         <Flex direction="column" align="center" justify="center">
-          <label htmlFor="task" hidden>Selecione uma tarefa</label>
-          <Select id="task" name="task" placeholder="Selecione uma tarefa" onChange={(e) => setSelectedTaskId(e.target.value)} value={selectedTaskId} isDisabled={isResting || isActive || time > 0}>
-            {tasks.map((task) => (
-              <option key={task.id} value={task.id}>{task.name}</option>
-            ))}
-          </Select>
+          <FormControl>
+            <FormLabel hidden>Selecione uma tarefa</FormLabel>
+            <Select id="task" name="task" placeholder="Selecione uma tarefa" onChange={(e) => setSelectedTaskId(e.target.value)} value={selectedTaskId} isDisabled={isResting || isActive || time > 0}>
+              {tasks.map((task) => (
+                <option key={task.id} value={task.id}>{task.name}</option>
+              ))}
+            </Select>
+          </FormControl>
         </Flex>
 
         <TimerComponent time={isResting ? restTime : time} />
