@@ -20,6 +20,7 @@ O backlog do projeto inclui funcionalidades e melhorias planejadas para versões
 - **Integração com Ferramentas de Produtividade**: Permitir a sincronização de tarefas com ferramentas populares como Trello, Asana e Todoist.
 - **Relatórios e Estatísticas**: Desenvolver uma seção para visualizar estatísticas de produtividade, como o número de ciclos Pomodoro completados e o tempo total focado.
 - **Modo Foco**: Implementar um modo que minimize as distrações, ocultando todas as outras interfaces, exceto o contador.
+- **Teste A/B Modo Dark e Modo Light**: Realizar um teste A/B para avaliar a preferência dos usuários entre o modo dark e o modo light, observando possíveis impactos na usabilidade e na satisfação do usuário. Será medido o tempo de permanência na aplicação, a frequência de uso e o feedback direto dos usuários para determinar qual modo é mais efetivo em promover a produtividade e o conforto visual.
 
 ### Melhorias
 
