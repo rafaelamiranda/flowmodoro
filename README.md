@@ -36,8 +36,6 @@ O backlog do projeto inclui funcionalidades e melhorias planejadas para versões
 
 ## 🚀 Instruções de Instalação e Uso
 
-1. **Clone o repositório:**
-
 1. Clone o repositório:  
    `git clone https://github.com/rafaelamiranda/flowmodoro.git`
 
